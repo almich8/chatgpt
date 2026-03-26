@@ -41,9 +41,26 @@ const form = document.getElementById('name-form');
 const promptTitle = document.getElementById('prompt-title');
 const nameInput = document.getElementById('name-input');
 const clearBtn = document.getElementById('clear-btn');
+const cancelBtn = document.getElementById('cancel-btn');
 
 let cells = prompts.map((task) => ({ task, name: '' }));
 let activeIndex = null;
+
+function showNameDialog() {
+  if (typeof dialog.showModal === 'function') {
+    dialog.showModal();
+    return;
+  }
+  dialog.setAttribute('open', '');
+}
+
+function closeNameDialog() {
+  if (typeof dialog.close === 'function') {
+    dialog.close();
+    return;
+  }
+  dialog.removeAttribute('open');
+}
 
 function render() {
   board.innerHTML = '';
@@ -66,23 +83,41 @@ function render() {
 }
 
 function calculateLines() {
+  const boardColumns = 5;
+  const boardRows = Math.ceil(cells.length / boardColumns);
   const hasName = cells.map((c) => Boolean(c.name.trim()));
   let lines = 0;
 
-  for (let r = 0; r < 5; r++) {
-    const row = hasName.slice(r * 5, r * 5 + 5);
-    if (row.every(Boolean)) lines++;
+  for (let r = 0; r < boardRows; r++) {
+    const row = hasName.slice(r * boardColumns, r * boardColumns + boardColumns);
+    if (row.length === boardColumns && row.every(Boolean)) lines++;
   }
 
-  for (let c = 0; c < 5; c++) {
-    const col = [0, 1, 2, 3, 4].map((r) => hasName[r * 5 + c]);
-    if (col.every(Boolean)) lines++;
+  for (let c = 0; c < boardColumns; c++) {
+    const col = [];
+    for (let r = 0; r < boardRows; r++) {
+      const index = r * boardColumns + c;
+      if (index < hasName.length) {
+        col.push(hasName[index]);
+      }
+    }
+    if (col.length === boardRows && col.every(Boolean)) lines++;
   }
 
-  const diag1 = [0, 6, 12, 18, 24].map((i) => hasName[i]);
-  const diag2 = [4, 8, 12, 16, 20].map((i) => hasName[i]);
-  if (diag1.every(Boolean)) lines++;
-  if (diag2.every(Boolean)) lines++;
+  const diagTopLeft = [];
+  const diagTopRight = [];
+  for (let r = 0; r < boardRows; r++) {
+    const leftIndex = r * boardColumns + r;
+    const rightIndex = r * boardColumns + (boardColumns - 1 - r);
+    if (leftIndex < hasName.length) {
+      diagTopLeft.push(hasName[leftIndex]);
+    }
+    if (rightIndex < hasName.length) {
+      diagTopRight.push(hasName[rightIndex]);
+    }
+  }
+  if (diagTopLeft.length === boardRows && diagTopLeft.every(Boolean)) lines++;
+  if (diagTopRight.length === boardRows && diagTopRight.every(Boolean)) lines++;
 
   return lines;
 }
@@ -92,25 +127,38 @@ function openEditor(index) {
   const cell = cells[index];
   promptTitle.textContent = cell.task;
   nameInput.value = cell.name;
-  dialog.showModal();
+  showNameDialog();
   setTimeout(() => nameInput.focus(), 0);
 }
 
 form.addEventListener('submit', (event) => {
   event.preventDefault();
+  if (event.submitter === cancelBtn) {
+    closeNameDialog();
+    return;
+  }
   if (activeIndex === null) return;
   cells[activeIndex].name = nameInput.value.trim();
   activeIndex = null;
-  dialog.close();
+  closeNameDialog();
   render();
+});
+
+cancelBtn.addEventListener('click', () => {
+  activeIndex = null;
+  closeNameDialog();
 });
 
 clearBtn.addEventListener('click', () => {
   if (activeIndex === null) return;
   cells[activeIndex].name = '';
   activeIndex = null;
-  dialog.close();
+  closeNameDialog();
   render();
+});
+
+dialog.addEventListener('close', () => {
+  activeIndex = null;
 });
 
 startBtn.addEventListener('click', () => {
@@ -124,3 +172,4 @@ resetBtn.addEventListener('click', () => {
 });
 
 render();
+closeNameDialog();
