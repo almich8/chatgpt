@@ -67,22 +67,24 @@ function render() {
 
 function calculateLines() {
   const hasName = cells.map((c) => Boolean(c.name.trim()));
+  const isCompleteLine = (indexes) =>
+    indexes.every((index) => index < hasName.length && hasName[index]);
   let lines = 0;
 
   for (let r = 0; r < 5; r++) {
-    const row = hasName.slice(r * 5, r * 5 + 5);
-    if (row.every(Boolean)) lines++;
+    const rowIndexes = [0, 1, 2, 3, 4].map((offset) => r * 5 + offset);
+    if (isCompleteLine(rowIndexes)) lines++;
   }
 
   for (let c = 0; c < 5; c++) {
-    const col = [0, 1, 2, 3, 4].map((r) => hasName[r * 5 + c]);
-    if (col.every(Boolean)) lines++;
+    const colIndexes = [0, 1, 2, 3, 4].map((r) => r * 5 + c);
+    if (isCompleteLine(colIndexes)) lines++;
   }
 
-  const diag1 = [0, 6, 12, 18, 24].map((i) => hasName[i]);
-  const diag2 = [4, 8, 12, 16, 20].map((i) => hasName[i]);
-  if (diag1.every(Boolean)) lines++;
-  if (diag2.every(Boolean)) lines++;
+  const diag1 = [0, 6, 12, 18, 24];
+  const diag2 = [4, 8, 12, 16, 20];
+  if (isCompleteLine(diag1)) lines++;
+  if (isCompleteLine(diag2)) lines++;
 
   return lines;
 }
