@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Нетворкинг игра - Школы-студия МХАТ</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <h1>Нетворкинг игра - Школы-студия МХАТ</h1>
+    </header>
+
+    <main>
+      <section id="start-screen" class="screen active">
+        <div class="hero">
+          <p class="eyebrow">Велком-день</p>
+          <h2>Нетворкинг-игра</h2>
+          <h3># Найди своих!</h3>
+          <p>
+            Знакомься с командой через игру — найди людей, которым подходит
+            описание, впиши имя и собери линию!
+          </p>
+
+          <ol class="steps">
+            <li><strong>01 ↓</strong><span>Нажми на клетку</span></li>
+            <li><strong>02 ↓</strong><span>Найди человека и впиши имя</span></li>
+            <li><strong>03 ↓</strong><span>Ряд, столбец или диагональ — победа</span></li>
+          </ol>
+
+          <p class="reward">Первые 3–5 получают мерч!</p>
+          <button id="start-btn" class="btn primary">Начать игру</button>
+        </div>
+      </section>
+
+      <section id="game-screen" class="screen">
+        <div class="ticker" aria-hidden="true">
+          <span>
+            Знакомься · Общайся · Находи своих · Выигрывай мерч · Школы-студия МХАТ
+          </span>
+        </div>
+
+        <div class="stats">
+          <div>Заполнено <strong id="filled-count">0</strong></div>
+          <div>Осталось <strong id="left-count">24</strong></div>
+          <div>Линий <strong id="lines-count">0</strong></div>
+          <button id="reset-btn" class="btn ghost">Начать заново</button>
+        </div>
+
+        <div id="board" class="board" aria-label="Поле нетворкинг-бинго"></div>
+
+        <div id="win-banner" class="win-banner" hidden>
+          <h3>Линия собрана!</h3>
+          <p>Беги к организаторам — ты в числе первых!</p>
+        </div>
+      </section>
+    </main>
+
+    <dialog id="name-dialog">
+      <form method="dialog" id="name-form">
+        <p id="prompt-text">Найди такого человека и впиши его имя:</p>
+        <h4 id="prompt-title"></h4>
+        <input id="name-input" type="text" placeholder="Введите имя" maxlength="40" required />
+        <menu>
+          <button value="cancel" class="btn ghost">Отмена</button>
+          <button id="clear-btn" type="button" class="btn warning">Очистить клетку</button>
+          <button value="default" class="btn primary">Записать ✓</button>
+        </menu>
+      </form>
+    </dialog>
+
+    <script src="script.js"></script>
+  </body>
+</html>
