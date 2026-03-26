@@ -177,6 +177,10 @@ dialog {
   max-width: 440px;
 }
 
+dialog:not([open]) {
+  display: none;
+}
+
 dialog::backdrop {
   background: rgba(0,0,0,.5);
 }
